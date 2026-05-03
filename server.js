@@ -9,12 +9,19 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// ✅ ADD HERE (VERY IMPORTANT POSITION)
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
+
 // Test route
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });
 
-// Connect MongoDB
+const expenseRoutes = require("./routes/expense");
+app.use("/api/expenses", expenseRoutes);
+
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
