@@ -7,85 +7,86 @@ function Dashboard() {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
 
-  //logout button
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/"
-  };
-
-  // 🔄 Fetch expenses
   const fetchExpenses = async () => {
-    try {
-      const res = await getExpenses();
-      setExpenses(res.data);
-    } catch (err) {
-      console.log(err);
-    }
+    const res = await getExpenses();
+    setExpenses(res.data);
   };
 
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  // ➕ Add expense
   const handleAdd = async () => {
-    try {
-      await addExpense({ title, amount, category });
-      setTitle("");
-      setAmount("");
-      setCategory("");
-      fetchExpenses();
-    } catch (err) {
-      console.log(err);
-    }
+    await addExpense({ title, amount, category });
+    setTitle("");
+    setAmount("");
+    setCategory("");
+    fetchExpenses();
   };
 
-  // ❌ Delete expense
   const handleDelete = async (id) => {
-    try {
-      await deleteExpense(id);
-      fetchExpenses();
-    } catch (err) {
-      console.log(err);
-    }
+    await deleteExpense(id);
+    fetchExpenses();
   };
 
   return (
-    <div>
+    <div style={styles.container}>
       <h2>Dashboard</h2>
 
-      {/* Add Expense */}
-      <input
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <input
-        placeholder="Amount"
-        value={amount}
-        onChange={(e) => setAmount(e.target.value)}
-      />
-      <input
-        placeholder="Category"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-      />
-      <button onClick={handleAdd}>Add Expense</button>
-      <button onClick={handleLogout}>Logout</button>
+      <div style={styles.form}>
+        <input
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <input
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        />
+        <button onClick={handleAdd}>Add</button>
+      </div>
 
-      <hr />
-
-      {/* Expense List */}
-      {expenses.map((exp) => (
-        <div key={exp._id}>
-          <p>
-            {exp.title} - ₹{exp.amount} ({exp.category})
-          </p>
-          <button onClick={() => handleDelete(exp._id)}>Delete</button>
-        </div>
-      ))}
+      <div style={styles.list}>
+        {expenses.map((exp) => (
+          <div key={exp._id} style={styles.card}>
+            <h4>{exp.title}</h4>
+            <p>₹{exp.amount}</p>
+            <p>{exp.category}</p>
+            <button onClick={() => handleDelete(exp._id)}>
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    padding: "20px",
+  },
+  form: {
+    display: "flex",
+    gap: "10px",
+    marginBottom: "20px",
+  },
+  list: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+    gap: "15px",
+  },
+  card: {
+    padding: "15px",
+    borderRadius: "10px",
+    background: "#f4f4f4",
+  },
+};
 
 export default Dashboard;
