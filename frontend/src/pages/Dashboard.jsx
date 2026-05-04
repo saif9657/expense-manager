@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { getExpenses, addExpense, deleteExpense } from "../services/api";
+import {
+  getExpenses,
+  addExpense,
+  deleteExpense,
+} from "../services/api";
+
+import ExpenseChart from "../components/ExpenseChart";
 
 function Dashboard() {
   const [expenses, setExpenses] = useState([]);
@@ -29,11 +35,19 @@ function Dashboard() {
     fetchExpenses();
   };
 
+  // 💡 total calculation
+  const total = expenses.reduce(
+    (sum, exp) => sum + Number(exp.amount),
+    0
+  );
+
   return (
-    <div style={styles.container}>
+    <div style={{ padding: "20px" }}>
       <h2>Dashboard</h2>
 
-      <div style={styles.form}>
+      <h3>Total Spending: ₹{total}</h3>
+
+      <div style={{ marginBottom: "20px" }}>
         <input
           placeholder="Title"
           value={title}
@@ -52,9 +66,22 @@ function Dashboard() {
         <button onClick={handleAdd}>Add</button>
       </div>
 
-      <div style={styles.list}>
+      {/* 📊 Chart */}
+      <ExpenseChart expenses={expenses} />
+
+      <hr />
+
+      <div>
         {expenses.map((exp) => (
-          <div key={exp._id} style={styles.card}>
+          <div
+            key={exp._id}
+            style={{
+              background: "#f4f4f4",
+              padding: "10px",
+              margin: "10px 0",
+              borderRadius: "8px",
+            }}
+          >
             <h4>{exp.title}</h4>
             <p>₹{exp.amount}</p>
             <p>{exp.category}</p>
@@ -67,26 +94,5 @@ function Dashboard() {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    padding: "20px",
-  },
-  form: {
-    display: "flex",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  list: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-    gap: "15px",
-  },
-  card: {
-    padding: "15px",
-    borderRadius: "10px",
-    background: "#f4f4f4",
-  },
-};
 
 export default Dashboard;
