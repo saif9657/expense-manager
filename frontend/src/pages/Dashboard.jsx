@@ -7,6 +7,12 @@ function Dashboard() {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
 
+  //logout button
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/"
+  };
+
   // 🔄 Fetch expenses
   const fetchExpenses = async () => {
     try {
@@ -65,6 +71,7 @@ function Dashboard() {
         onChange={(e) => setCategory(e.target.value)}
       />
       <button onClick={handleAdd}>Add Expense</button>
+      <button onClick={handleLogout}>Logout</button>
 
       <hr />
 
