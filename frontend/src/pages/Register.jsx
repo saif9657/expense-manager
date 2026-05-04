@@ -1,41 +1,43 @@
 import { useState } from "react";
-import { registerUser } from "../services/api";
+import { useNavigate } from "react-router-dom";
+import API from "../services/api";
 
 function Register() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [msg, setMsg] = useState("");
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
-      const res = await registerUser({ name, email, password });
-      alert("Registered successfully!");
-      console.log(res.data);
+      await API.post("/auth/register", { email, password });
+      setMsg("Registered successfully ✅");
+      setTimeout(() => navigate("/"), 800);
     } catch (err) {
-      console.log(err);
-      alert("Register failed");
+      setMsg("Registration failed ❌");
     }
   };
 
   return (
-    <div>
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
       <h2>Register</h2>
 
-      <input
-        placeholder="Name"
-        onChange={(e) => setName(e.target.value)}
-      />
       <input
         placeholder="Email"
         onChange={(e) => setEmail(e.target.value)}
       />
+      <br />
+
       <input
-        placeholder="Password"
         type="password"
+        placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
       />
+      <br />
 
       <button onClick={handleRegister}>Register</button>
+
+      <p>{msg}</p>
     </div>
   );
 }

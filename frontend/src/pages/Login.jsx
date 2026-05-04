@@ -5,37 +5,31 @@ import API from "../services/api";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
-  //New block added here
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/dashboard");
-    }
+    if (token) navigate("/dashboard");
   }, [navigate]);
 
   const handleLogin = async () => {
     try {
       const res = await API.post("/auth/login", { email, password });
-
-      // ✅ Axios response fix
       const token = res.data.token;
 
       if (token) {
         localStorage.setItem("token", token);
-        alert("Login successful");
-        navigate("/dashboard");
-      } else {
-        alert("Login failed");
+        setMsg("Login successful ✅");
+        setTimeout(() => navigate("/dashboard"), 800);
       }
-    } catch (error) {
-      alert(error.response?.data || "Login error");
+    } catch (err) {
+      setMsg("Login failed ❌");
     }
   };
 
   return (
-    <div>
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
       <h2>Login</h2>
 
       <input
@@ -43,14 +37,18 @@ function Login() {
         placeholder="Email"
         onChange={(e) => setEmail(e.target.value)}
       />
+      <br />
 
       <input
         type="password"
         placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
       />
+      <br />
 
       <button onClick={handleLogin}>Login</button>
+
+      <p>{msg}</p>
     </div>
   );
 }
